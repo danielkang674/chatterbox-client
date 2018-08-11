@@ -3,8 +3,10 @@
 
 const app = {};
 app.server = 'http://parse.atx.hackreactor.com/chatterbox/classes/messages';
-
+app.friends = ['Bob', 'Jake', 'Justin', 'Casey', 'Hitt'];
 app.init = () => {
+  app.fetchAllMessages();
+  app.renderFriends();
   
   $('#fetchMessage').click((event) => {
     event.preventDefault();
@@ -17,7 +19,16 @@ app.init = () => {
     app.fetchAllMessages();
   });
 
-  app.fetchAllMessages();
+  // $('.friend').css(bold);
+ 
+  // $('.username').click(() => {
+  //   console.log(event.target.innerText);
+  //   app.friends.push(event.target.innerText);
+  //   //app.addFriend(event.target.innerText);
+  //   $('.username').css('font-weight', 'Bold');
+  //   app.renderFriends();
+  // });
+
   return;
 };
 
@@ -47,7 +58,7 @@ app.fetch = (params) => {
   // let params = encodeURI('&where={"username":"Walker"
 //                                    roomname: "lobby"}');
   // console.log(params);
-  let ourDataObj = {"order": "-createdAt", "limit": 30, "where": {"roomname": params}};
+  let ourDataObj = {'order': '-createdAt', 'limit': 30, 'where': {'roomname': params}};
   $.ajax({
     url: app.server,
     type: 'GET',
@@ -67,10 +78,12 @@ app.clearMessages = () => {
 
 app.renderMessage = (message) => {
   let cleanedData = app.cleanData(message);
-  $('#chats').append(`<p class="singleMessage"><a href="#" class="username" data="${cleanedData.username}">${cleanedData.username}</a>: ${cleanedData.text}</p>`);
-  $('.username').click((event) => {
-    app.handleUsernameClick(event.target.innerText);
+  $('#chats').append(`<p class="singleMessage"><span class="username">${cleanedData.username}</span>: ${cleanedData.text}</p>`);
+  $('.username').click((event)=>{
+    event.preventDefault();
+    app.addFriend(event.target.innerText);
   });
+  //app.handleUsernameClick(event.target.innerText);
 };
 
 app.renderRoom = (roomString) => {
@@ -86,7 +99,7 @@ app.handleSubmit = (message) => {
   console.log('I was submitted from handleSubmit');
   app.send(message);
 };
-// app.allFriends = [];    
+// ;    
 app.parseUser = (someString) => {
   let newName = someString.slice(10);
   return newName;
@@ -118,6 +131,25 @@ app.fetchAllMessages = ()=>{
   let lobbyName = $('#lobbyRoom').val();
   app.fetch(lobbyName);
 };
+
+app.addFriend = (friend) => {
+  app.friends.push(friend);
+  app.renderFriends();
+};
+
+// app.addFriendClick = () => {
+//   $('.username').click((event) => {
+//     app.addFriend(event.target.innerText);
+//   });
+// };
+
+app.renderFriends = () => {
+  app.friends.forEach((friend)=>{
+    $('#myFriends').append(`<p class="friend"><a href="#">${friend}</a></p>`);
+  });
+};
+
+
 // `<script>$("#chats").append(<img src="https://bit.ly/2Oq3AkD"></img>)</script>`
 // "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
 // "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
