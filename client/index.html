@@ -28,26 +28,40 @@
 <body>
   <div id="main">
     <h1>chatterbox</h1>
+    <select id="lobbyRoom" class="lobby">
+      <option value="lobby">Lobby</option>
+      <option value="coolKidsClub">Cool Kids Club</option>
+    </select>
+    <h2>Lobby Rooms</h2>
+    <form method="POST" id="addLobby">
+      <input type="text" id="nameOfLobby" name="nameOfLobby">
+      <input type="submit" class="lobby" id ="changeRoom" name="changeRoom" value="Add a Room">
+    </form>
 
 
     <!-- Your HTML goes here! -->
   </div>
   <div id="inputMessages">
+    <h2>Send messages</h2>
     <form method="POST" id="send">
-      <input type="text" id="roomSelect" name="roomSelect">
+      <!-- <input type="text" id="roomSelect" name="roomSelect"> -->
       <input type="text" id="message" class="" name="inputText">
       <input type="submit" id="submit" class="submit" name="submitBtn" value="Submit">
     </form>
   </div>
+  <div>
+  <button id="fetchMessage" type="button">Get them Messages!</button>
   <button id='clearMessagesBtn' type='button'>Clear those Messages!</button>
+  </div>
   <div id="chats"></div>
   <script>
     $('document').ready(function () {
+      app.init();
       $('#send').submit((event) => {
         event.preventDefault();
         let text = $('#message').val();
         let username = app.parseUser(window.location.search);
-        let roomname = $('#roomSelect').val();
+        let roomname = $('#lobbyRoom').val();
         //let user;
         let newObj = {
           username,
@@ -55,10 +69,14 @@
           roomname
         };
         app.handleSubmit(newObj);
-        console.log('Submitted from input form');
       });
       $('#clearMessagesBtn').click((event) => {
         app.clearMessages();
+      });
+      $('#addLobby').submit((event) => {
+        event.preventDefault();
+        let lobbyName = $('#nameOfLobby').val();
+        $('#lobbyRoom').append(`<option value="${lobbyName}">${lobbyName}</option>`)
       });
     });
   </script>

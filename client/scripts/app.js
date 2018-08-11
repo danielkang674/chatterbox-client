@@ -5,13 +5,24 @@ const app = {};
 app.server = 'http://parse.atx.hackreactor.com/chatterbox/classes/messages';
 
 app.init = () => {
+  $('#fetchMessage').click((event) => {
+    event.preventDefault();
+    console.log(event);
+    app.fetch();
+  });
+
   return;
 };
 
 app.send = (message) => {
+  // let trollMessage = {
+  //   username: "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>",
+  //   text: "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>",
+  //   roomname: "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>",
+  // };
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -26,15 +37,15 @@ app.send = (message) => {
 };
 
 app.fetch = () => {
-  let params = encodeURI('order-createdAt');
-  console.log(params);
+  // let params = encodeURI('&where={"username":"Walker"
+//                                    roomname: "lobby"}');
+  // console.log(params);
   $.ajax({
-    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages?order=-createdAt',
+    url: app.server + '?order=-createdAt' + '&limit=100',
     type: 'GET',
     success: function (data) {
-    
-      console.log(data);
-      $('#chats').append(`<p class="chatText">${data.results[0].text}</p>`);
+      let cleanData = app.cleanData(data);
+      app.handleData(cleanData);
     },
     error: function (data) {
       console.error('chatterbox failed to get message:', data);
@@ -71,3 +82,30 @@ app.parseUser = (someString) => {
   let newName = someString.slice(10);
   return newName;
 };
+
+app.handleData = (data)=>{
+  // let resultsArray = data.results;
+  console.log('from handleData', data);
+  data.forEach(message=>{
+    app.renderMessage(message);
+  });
+};
+
+//data should be an object that has username, roomname, and text
+app.cleanData = (data) => {
+  let results = data.results;
+  console.log('from cleanData', results);
+  
+  //let newResults = _.escape(results);
+  let newResult = results.map(user=>{
+    _.escape(user.username);
+    _.escape(user.text);
+    _.escape(user.roomname);
+  });
+  
+  return newResult;
+  console.log('newResults', newResults);
+};
+// `<script>$("#chats").append(<img src="https://bit.ly/2Oq3AkD"></img>)</script>`
+// "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
+// "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
