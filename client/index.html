@@ -69,6 +69,8 @@
           roomname
         };
         app.handleSubmit(newObj);
+        $('#message').val('');
+        app.fetchAllMessages();
       });
       $('#clearMessagesBtn').click((event) => {
         app.clearMessages();
@@ -76,7 +78,8 @@
       $('#addLobby').submit((event) => {
         event.preventDefault();
         let lobbyName = $('#nameOfLobby').val();
-        $('#lobbyRoom').append(`<option value="${lobbyName}">${lobbyName}</option>`)
+        $('#lobbyRoom').append(`<option value="${lobbyName}">${lobbyName}</option>`);
+        $('#nameOfLobby').val('');
       });
     });
   </script>

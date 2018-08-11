@@ -5,12 +5,19 @@ const app = {};
 app.server = 'http://parse.atx.hackreactor.com/chatterbox/classes/messages';
 
 app.init = () => {
+  
   $('#fetchMessage').click((event) => {
     event.preventDefault();
-    console.log(event);
-    app.fetch();
+    app.fetchAllMessages();
+  });
+  
+  
+  $('#lobbyRoom').change((event)=>{
+    event.preventDefault();
+    app.fetchAllMessages();
   });
 
+  app.fetchAllMessages();
   return;
 };
 
@@ -36,16 +43,17 @@ app.send = (message) => {
   });
 };
 
-app.fetch = () => {
+app.fetch = (params) => {
   // let params = encodeURI('&where={"username":"Walker"
 //                                    roomname: "lobby"}');
   // console.log(params);
+  let ourDataObj = {"order": "-createdAt", "limit": 30, "where": {"roomname": params}};
   $.ajax({
-    url: app.server + '?order=-createdAt' + '&limit=100',
+    url: app.server,
     type: 'GET',
+    data: ourDataObj,
     success: function (data) {
-      let cleanData = app.cleanData(data);
-      app.handleData(cleanData);
+      app.handleData(data);
     },
     error: function (data) {
       console.error('chatterbox failed to get message:', data);
@@ -58,7 +66,8 @@ app.clearMessages = () => {
 };
 
 app.renderMessage = (message) => {
-  $('#chats').append(`<p class=""><a href="#" class="username" data="${message.username}">${message.username}</a>: ${message.text}</p>`);
+  let cleanedData = app.cleanData(message);
+  $('#chats').append(`<p class="singleMessage"><a href="#" class="username" data="${cleanedData.username}">${cleanedData.username}</a>: ${cleanedData.text}</p>`);
   $('.username').click((event) => {
     app.handleUsernameClick(event.target.innerText);
   });
@@ -86,25 +95,28 @@ app.parseUser = (someString) => {
 app.handleData = (data)=>{
   // let resultsArray = data.results;
   console.log('from handleData', data);
-  data.forEach(message=>{
+  
+  
+  data.results.forEach(message=>{
     app.renderMessage(message);
   });
 };
 
 //data should be an object that has username, roomname, and text
-app.cleanData = (data) => {
-  let results = data.results;
-  console.log('from cleanData', results);
+app.cleanData = (message) => {
+  let results = message;
+  results.username = _.escape(results.username);
+  results.text = _.escape(results.text);
+  results.roomname = _.escape(results.roomname);
   
-  //let newResults = _.escape(results);
-  let newResult = results.map(user=>{
-    _.escape(user.username);
-    _.escape(user.text);
-    _.escape(user.roomname);
-  });
-  
-  return newResult;
-  console.log('newResults', newResults);
+  return results;
+
+};
+
+app.fetchAllMessages = ()=>{
+  $('.singleMessage').remove();
+  let lobbyName = $('#lobbyRoom').val();
+  app.fetch(lobbyName);
 };
 // `<script>$("#chats").append(<img src="https://bit.ly/2Oq3AkD"></img>)</script>`
 // "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
