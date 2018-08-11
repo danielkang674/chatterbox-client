@@ -26,10 +26,13 @@ app.send = (message) => {
 };
 
 app.fetch = () => {
+  let params = encodeURI('order-createdAt');
+  console.log(params);
   $.ajax({
-    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
+    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages?order=-createdAt',
     type: 'GET',
     success: function (data) {
+    
       console.log(data);
       $('#chats').append(`<p class="chatText">${data.results[0].text}</p>`);
     },
