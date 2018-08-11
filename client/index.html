@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
@@ -25,8 +26,37 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
+     
+
       <!-- Your HTML goes here! -->
     </div>
+    <div id="inputMessages">
+      <form method="POST" id="send">
+        <input type="text" id="roomSelect"  name="roomSelect">
+        <input type="text" id="message" class="" name="inputText">
+        <input type="submit" id="submit" class="submit" name="submitBtn" value="Submit">
+      </form>
+    </div>
+    <button id='clearMessagesBtn' type='button'>Clear those Messages!</button>    
     <div id="chats"></div>
+    <script>
+      $('#send').submit((event)=>{
+        let text = $('#message').val();
+        let username = app.parseUser(window.location.search);
+        let roomname = $('#roomSelect').val();
+        //let user;
+        let newObj = {
+          username,
+          text,
+          roomname
+        };
+        app.handleSubmit(newObj);
+        event.preventDefault();
+      });
+
+      $('#clearMessagesBtn').click((event) => {
+        app.clearMessages();
+      });
+    </script>
   </body>
 </html>
