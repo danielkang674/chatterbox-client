@@ -1,46 +1,50 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>chatterbox</title>
-    <link rel="stylesheet" href="styles/styles.css">
 
-    <!-- dependencies -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
-    <script>
-      // YOU DO NOT NEED TO EDIT THIS CODE
-      if (!/(&|\?)username=/.test(window.location.search)) {
-        var newSearch = window.location.search;
-        if (newSearch !== '' & newSearch !== '?') {
-          newSearch += '&';
-        }
-        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
-        window.location.search = newSearch;
+<head>
+  <meta charset="utf-8">
+  <title>chatterbox</title>
+  <link rel="stylesheet" href="styles/styles.css">
+
+  <!-- dependencies -->
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script>
+    // YOU DO NOT NEED TO EDIT THIS CODE
+    if (!/(&|\?)username=/.test(window.location.search)) {
+      var newSearch = window.location.search;
+      if (newSearch !== '' & newSearch !== '?') {
+        newSearch += '&';
       }
-    </script>
-    <!-- your scripts -->
-    <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
-  </head>
-  <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-     
+      newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+      window.location.search = newSearch;
+    }
+  </script>
+  <!-- your scripts -->
+  <script src="env/config.js"></script>
+  <script src="scripts/app.js"></script>
+</head>
 
-      <!-- Your HTML goes here! -->
-    </div>
-    <div id="inputMessages">
-      <form method="POST" id="send">
-        <input type="text" id="roomSelect"  name="roomSelect">
-        <input type="text" id="message" class="" name="inputText">
-        <input type="submit" id="submit" class="submit" name="submitBtn" value="Submit">
-      </form>
-    </div>
-    <button id='clearMessagesBtn' type='button'>Clear those Messages!</button>    
-    <div id="chats"></div>
-    <script>
-      $('#send').submit((event)=>{
+<body>
+  <div id="main">
+    <h1>chatterbox</h1>
+
+
+    <!-- Your HTML goes here! -->
+  </div>
+  <div id="inputMessages">
+    <form method="POST" id="send">
+      <input type="text" id="roomSelect" name="roomSelect">
+      <input type="text" id="message" class="" name="inputText">
+      <input type="submit" id="submit" class="submit" name="submitBtn" value="Submit">
+    </form>
+  </div>
+  <button id='clearMessagesBtn' type='button'>Clear those Messages!</button>
+  <div id="chats"></div>
+  <script>
+    $('document').ready(function () {
+      $('#send').submit((event) => {
+        event.preventDefault();
         let text = $('#message').val();
         let username = app.parseUser(window.location.search);
         let roomname = $('#roomSelect').val();
@@ -51,12 +55,13 @@
           roomname
         };
         app.handleSubmit(newObj);
-        event.preventDefault();
+        console.log('Submitted from input form');
       });
-
       $('#clearMessagesBtn').click((event) => {
         app.clearMessages();
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

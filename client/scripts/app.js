@@ -60,7 +60,7 @@ app.handleUsernameClick = (username) => {
 };
 
 app.handleSubmit = (message) => {
-  console.log('I was submitted');
+  console.log('I was submitted from handleSubmit');
   app.send(message);
 };
 // app.allFriends = [];    
