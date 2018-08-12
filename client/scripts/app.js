@@ -18,17 +18,6 @@ app.init = () => {
     event.preventDefault();
     app.fetchAllMessages();
   });
-
-  // $('.friend').css(bold);
- 
-  // $('.username').click(() => {
-  //   console.log(event.target.innerText);
-  //   app.friends.push(event.target.innerText);
-  //   //app.addFriend(event.target.innerText);
-  //   $('.username').css('font-weight', 'Bold');
-  //   app.renderFriends();
-  // });
-
   return;
 };
 
@@ -78,12 +67,13 @@ app.clearMessages = () => {
 
 app.renderMessage = (message) => {
   let cleanedData = app.cleanData(message);
-  $('#chats').append(`<p class="singleMessage"><span class="username">${cleanedData.username}</span>: ${cleanedData.text}</p>`);
-  $('.username').click((event)=>{
-    event.preventDefault();
-    app.addFriend(event.target.innerText);
+  let singleMessage = $('<p></p>').text(`${cleanedData.username}: ${cleanedData.text}`);
+  singleMessage.addClass(`singleMessage ${cleanedData.username}`);
+  singleMessage.click((event)=>{
+    app.addFriend(cleanedData.username);
+    $(`.${cleanedData.username}`).css('font-weight', 'Bold');
   });
-  //app.handleUsernameClick(event.target.innerText);
+  $('#chats').append(singleMessage);
 };
 
 app.renderRoom = (roomString) => {
@@ -91,7 +81,6 @@ app.renderRoom = (roomString) => {
 };
 
 app.handleUsernameClick = (username) => {
-    // app.allFriends.push(username);
   return;
 };
 
@@ -121,7 +110,7 @@ app.cleanData = (message) => {
   results.username = _.escape(results.username);
   results.text = _.escape(results.text);
   results.roomname = _.escape(results.roomname);
-  
+  results.username = results.username.replace(/[^A-Za-z0-9]/g, '');
   return results;
 
 };
@@ -133,23 +122,15 @@ app.fetchAllMessages = ()=>{
 };
 
 app.addFriend = (friend) => {
-  app.friends.push(friend);
+  let cleanFriend = _.escape(friend);
+  app.friends.push(cleanFriend);
   app.renderFriends();
 };
 
-// app.addFriendClick = () => {
-//   $('.username').click((event) => {
-//     app.addFriend(event.target.innerText);
-//   });
-// };
-
 app.renderFriends = () => {
+  $('#myFriends').empty();
   app.friends.forEach((friend)=>{
     $('#myFriends').append(`<p class="friend"><a href="#">${friend}</a></p>`);
   });
 };
 
-
-// `<script>$("#chats").append(<img src="https://bit.ly/2Oq3AkD"></img>)</script>`
-// "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
-// "<script>document.body.style.backgroundImage = `url('https://i.pinimg.com/originals/48/44/64/484464fe103a69440e452d52010f86cf.jpg')`;</script>"
